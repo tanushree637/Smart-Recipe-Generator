@@ -186,7 +186,7 @@ function App() {
     files.forEach((file) => form.append("images", file));
 
     try {
-      const resp = await fetch("http://localhost:5000/analyze-images", {
+      const resp = await fetch("https://smart-recipe-generator-rnri.onrender.com/analyze-images", {
         method: "POST",
         body: form,
       });
@@ -512,7 +512,7 @@ function App() {
               }
               setLoading(true);
               try {
-                const response = await fetch("http://localhost:5000/generate", {
+                const response = await fetch("https://smart-recipe-generator-rnri.onrender.com/generate", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
