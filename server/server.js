@@ -13,10 +13,10 @@ const app = express();
 app.use(
   cors({
     origin: [
+      "https://smart-recipe-generator-q9mk9lvjm-tanushree-srivastvs-projects.vercel.app",
       "https://smart-recipe-generator-liard.vercel.app",
       "https://smart-recipe-generator-tanushree-srivastvs-projects.vercel.app",
       "https://smart-recipe-generator-git-main-tanushree-srivastvs-projects.vercel.app",
-      "https://smart-recipe-generator-q9mk9lvjm-tanushree-srivastvs-projects.vercel.app",
     ],
   }),
 );
