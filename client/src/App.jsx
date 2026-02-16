@@ -1,3 +1,4 @@
+// Production API update - Feb 2026
 import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
