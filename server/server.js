@@ -1,3 +1,4 @@
+//updated server.js with enhanced ingredient matching, dietary filters, and image analysis improvements (Feb 2026)
 const axios = require("axios");
 const express = require("express");
 const cors = require("cors");
