@@ -43,9 +43,9 @@ function App() {
     (async () => {
       try {
         const [recipeResp, ingResp, cuisineResp] = await Promise.all([
-          fetch("http://localhost:5000/recipes"),
-          fetch("http://localhost:5000/ingredients"),
-          fetch("http://localhost:5000/cuisines"),
+          fetch("https://smart-recipe-generator-rnri.onrender.com/recipes"),
+          fetch("https://smart-recipe-generator-rnri.onrender.com/ingredients"),
+          fetch("https://smart-recipe-generator-rnri.onrender.com/cuisines"),
         ]);
         const recipeData = await recipeResp.json();
         const ingData = await ingResp.json();
@@ -148,7 +148,7 @@ function App() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/generate", {
+      const response = await fetch("https://smart-recipe-generator-rnri.onrender.com/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
