@@ -9,7 +9,11 @@ require("dotenv").config();
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://smart-recipe-generator-liard.vercel.app",
+  }),
+);
 app.use(express.json());
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -39,23 +43,99 @@ const PORT = 5000;
 app.get("/ingredients", (_req, res) => {
   const allIngredients = new Set();
   recipesData.forEach((r) => {
-    (r.ingredients || []).forEach((ing) => allIngredients.add(ing.toLowerCase()));
+    (r.ingredients || []).forEach((ing) =>
+      allIngredients.add(ing.toLowerCase()),
+    );
   });
   // Also add common pantry items for the picker
   const extras = [
-    "salt","pepper","oil","olive oil","butter","garlic","ginger","onion",
-    "tomato","potato","carrot","cucumber","lettuce","broccoli","spinach",
-    "cabbage","mushroom","bell pepper","corn","peas","beans","zucchini",
-    "eggplant","cauliflower","celery","avocado","lemon","lime",
-    "chicken","beef","pork","fish","egg","shrimp","lamb","turkey","bacon",
-    "milk","cheese","cream","yogurt","paneer","tofu","tempeh",
-    "rice","bread","pasta","noodles","flour","oats","tortilla","quinoa",
-    "sugar","honey","soy sauce","vinegar","coconut milk","peanut",
-    "almond","cashew","walnut","sesame","basil","oregano","thyme",
-    "cumin","paprika","turmeric","cinnamon","chili","cilantro","parsley",
-    "mint","rosemary","bay leaf","garam masala","curry powder",
-    "banana","strawberry","apple","mango","pineapple","coconut",
-    "chocolate","cocoa powder","vanilla","maple syrup",
+    "salt",
+    "pepper",
+    "oil",
+    "olive oil",
+    "butter",
+    "garlic",
+    "ginger",
+    "onion",
+    "tomato",
+    "potato",
+    "carrot",
+    "cucumber",
+    "lettuce",
+    "broccoli",
+    "spinach",
+    "cabbage",
+    "mushroom",
+    "bell pepper",
+    "corn",
+    "peas",
+    "beans",
+    "zucchini",
+    "eggplant",
+    "cauliflower",
+    "celery",
+    "avocado",
+    "lemon",
+    "lime",
+    "chicken",
+    "beef",
+    "pork",
+    "fish",
+    "egg",
+    "shrimp",
+    "lamb",
+    "turkey",
+    "bacon",
+    "milk",
+    "cheese",
+    "cream",
+    "yogurt",
+    "paneer",
+    "tofu",
+    "tempeh",
+    "rice",
+    "bread",
+    "pasta",
+    "noodles",
+    "flour",
+    "oats",
+    "tortilla",
+    "quinoa",
+    "sugar",
+    "honey",
+    "soy sauce",
+    "vinegar",
+    "coconut milk",
+    "peanut",
+    "almond",
+    "cashew",
+    "walnut",
+    "sesame",
+    "basil",
+    "oregano",
+    "thyme",
+    "cumin",
+    "paprika",
+    "turmeric",
+    "cinnamon",
+    "chili",
+    "cilantro",
+    "parsley",
+    "mint",
+    "rosemary",
+    "bay leaf",
+    "garam masala",
+    "curry powder",
+    "banana",
+    "strawberry",
+    "apple",
+    "mango",
+    "pineapple",
+    "coconut",
+    "chocolate",
+    "cocoa powder",
+    "vanilla",
+    "maple syrup",
   ];
   extras.forEach((e) => allIngredients.add(e));
   res.json({ ingredients: [...allIngredients].sort() });
@@ -85,17 +165,29 @@ const stem = (word) => {
 
 // Synonym map for common ingredient aliases
 const SYNONYMS = {
-  "coriander": "cilantro", "cilantro": "coriander",
-  "capsicum": "bell pepper", "bell pepper": "capsicum",
-  "scallion": "green onion", "green onion": "scallion",
+  coriander: "cilantro",
+  cilantro: "coriander",
+  capsicum: "bell pepper",
+  "bell pepper": "capsicum",
+  scallion: "green onion",
+  "green onion": "scallion",
   "spring onion": "green onion",
-  "courgette": "zucchini", "zucchini": "courgette",
-  "aubergine": "eggplant", "eggplant": "aubergine",
-  "prawns": "shrimp", "shrimp": "prawns",
-  "curd": "yogurt", "yogurt": "curd",
-  "heavy cream": "cream", "whipping cream": "cream",
-  "spaghetti": "pasta", "penne": "pasta", "linguine": "pasta",
-  "basmati rice": "rice", "jasmine rice": "rice", "brown rice": "rice",
+  courgette: "zucchini",
+  zucchini: "courgette",
+  aubergine: "eggplant",
+  eggplant: "aubergine",
+  prawns: "shrimp",
+  shrimp: "prawns",
+  curd: "yogurt",
+  yogurt: "curd",
+  "heavy cream": "cream",
+  "whipping cream": "cream",
+  spaghetti: "pasta",
+  penne: "pasta",
+  linguine: "pasta",
+  "basmati rice": "rice",
+  "jasmine rice": "rice",
+  "brown rice": "rice",
   "olive oil": "oil",
   "coconut oil": "oil",
   "vegetable oil": "oil",
@@ -123,24 +215,74 @@ const ingredientsMatch = (a, b) => {
 
 // Expanded ingredient classification
 const NON_VEG_INGREDIENTS = new Set([
-  "chicken", "egg", "beef", "pork", "fish", "mutton", "meat", "shrimp",
-  "prawn", "lamb", "turkey", "bacon", "ham", "sausage", "crab", "lobster",
+  "chicken",
+  "egg",
+  "beef",
+  "pork",
+  "fish",
+  "mutton",
+  "meat",
+  "shrimp",
+  "prawn",
+  "lamb",
+  "turkey",
+  "bacon",
+  "ham",
+  "sausage",
+  "crab",
+  "lobster",
 ]);
 const DAIRY_INGREDIENTS = new Set([
-  "milk", "cheese", "butter", "cream", "paneer", "yogurt", "curd", "ghee",
-  "whey", "cottage cheese", "mozzarella", "parmesan",
+  "milk",
+  "cheese",
+  "butter",
+  "cream",
+  "paneer",
+  "yogurt",
+  "curd",
+  "ghee",
+  "whey",
+  "cottage cheese",
+  "mozzarella",
+  "parmesan",
 ]);
 const GLUTEN_INGREDIENTS = new Set([
-  "flour", "bread", "pasta", "bun", "noodles", "wheat", "semolina",
-  "spring roll wrapper", "soy sauce", "barley", "rye", "couscous",
+  "flour",
+  "bread",
+  "pasta",
+  "bun",
+  "noodles",
+  "wheat",
+  "semolina",
+  "spring roll wrapper",
+  "soy sauce",
+  "barley",
+  "rye",
+  "couscous",
 ]);
 const NUT_INGREDIENTS = new Set([
-  "peanut", "almond", "cashew", "walnut", "pistachio", "hazelnut",
-  "macadamia", "pecan", "pine nut",
+  "peanut",
+  "almond",
+  "cashew",
+  "walnut",
+  "pistachio",
+  "hazelnut",
+  "macadamia",
+  "pecan",
+  "pine nut",
 ]);
 const HIGH_CARB_INGREDIENTS = new Set([
-  "rice", "pasta", "bread", "potato", "sugar", "flour", "oats", "bun",
-  "noodles", "honey", "banana",
+  "rice",
+  "pasta",
+  "bread",
+  "potato",
+  "sugar",
+  "flour",
+  "oats",
+  "bun",
+  "noodles",
+  "honey",
+  "banana",
 ]);
 
 // Check if recipe passes a dietary filter
@@ -154,8 +296,10 @@ const matchesDiet = (recipe, preference) => {
   if (tags.length > 0) {
     // Special handling: "non-vegetarian" means recipe MUST contain meat
     if (pref === "non-vegetarian") {
-      return tags.includes("non-vegetarian") ||
-        normalize(recipe.ingredients).some((i) => NON_VEG_INGREDIENTS.has(i));
+      return (
+        tags.includes("non-vegetarian") ||
+        normalize(recipe.ingredients).some((i) => NON_VEG_INGREDIENTS.has(i))
+      );
     }
     return tags.includes(pref);
   }
@@ -170,14 +314,22 @@ const matchesDiet = (recipe, preference) => {
   const hasHoney = ing.includes("honey");
 
   switch (pref) {
-    case "vegetarian":   return !hasNonVeg;
-    case "vegan":        return !hasNonVeg && !hasDairy && !hasHoney;
-    case "non-vegetarian": return hasNonVeg;
-    case "gluten-free":  return !hasGluten;
-    case "dairy-free":   return !hasDairy;
-    case "nut-free":     return !hasNuts;
-    case "low-carb":     return !highCarb;
-    default:             return true;
+    case "vegetarian":
+      return !hasNonVeg;
+    case "vegan":
+      return !hasNonVeg && !hasDairy && !hasHoney;
+    case "non-vegetarian":
+      return hasNonVeg;
+    case "gluten-free":
+      return !hasGluten;
+    case "dairy-free":
+      return !hasDairy;
+    case "nut-free":
+      return !hasNuts;
+    case "low-carb":
+      return !highCarb;
+    default:
+      return true;
   }
 };
 
@@ -193,7 +345,8 @@ const withinTime = (recipe, limit) => {
 
 // ─── Generate endpoint (enhanced matching) ───────────────────────────────────
 app.post("/generate", (req, res) => {
-  const { ingredients, dietaryPreference, difficulty, maxTime, cuisine } = req.body;
+  const { ingredients, dietaryPreference, difficulty, maxTime, cuisine } =
+    req.body;
 
   if (!ingredients) {
     return res.status(400).json({ error: "Ingredients are required" });
@@ -207,8 +360,14 @@ app.post("/generate", (req, res) => {
 
   // Common pantry staples that shouldn't heavily penalise a recipe if missing
   const PANTRY_STAPLES = new Set([
-    "salt", "pepper", "oil", "water", "sugar", "butter",
-    "olive oil", "vegetable oil",
+    "salt",
+    "pepper",
+    "oil",
+    "water",
+    "sugar",
+    "butter",
+    "olive oil",
+    "vegetable oil",
   ]);
 
   const scoredRecipes = recipesData.map((recipe) => {
@@ -237,31 +396,34 @@ app.post("/generate", (req, res) => {
 
     // ── Key metrics ──
     // recipeMatchPct: what % of the RECIPE's ingredients the user has
-    const recipeMatchPct = totalIngredients > 0
-      ? Math.round((matchCount / totalIngredients) * 100)
-      : 0;
+    const recipeMatchPct =
+      totalIngredients > 0
+        ? Math.round((matchCount / totalIngredients) * 100)
+        : 0;
 
     // coveragePct: what % of the USER's ingredients this recipe uses
-    const coveragePct = userIngredients.length > 0
-      ? Math.round((userIngsUsed.length / userIngredients.length) * 100)
-      : 0;
+    const coveragePct =
+      userIngredients.length > 0
+        ? Math.round((userIngsUsed.length / userIngredients.length) * 100)
+        : 0;
 
     // How many missing ingredients are just pantry staples?
     const missingNonPantry = missingIngredients.filter(
       (m) => !PANTRY_STAPLES.has(m),
     );
-    const missingPantryCount = missingIngredients.length - missingNonPantry.length;
+    const missingPantryCount =
+      missingIngredients.length - missingNonPantry.length;
 
     // ── Composite ranking score (higher = better) ──
     // Heavily reward recipes that use ALL user ingredients
     // Reward recipes where the user has most of the recipe's ingredients
     // Lightly penalise missing non-pantry ingredients
     const compositeScore =
-      (coveragePct * 3) +        // 3× weight: prefer recipes that use ALL user ingredients
-      (recipeMatchPct * 2) +     // 2× weight: prefer recipes user can fully make
-      (userIngsUsed.length * 10) + // bonus per user ingredient used
-      (missingPantryCount * 5) - // reduce penalty for missing pantry staples
-      (missingNonPantry.length * 8); // penalise hard-to-get missing items
+      coveragePct * 3 + // 3× weight: prefer recipes that use ALL user ingredients
+      recipeMatchPct * 2 + // 2× weight: prefer recipes user can fully make
+      userIngsUsed.length * 10 + // bonus per user ingredient used
+      missingPantryCount * 5 - // reduce penalty for missing pantry staples
+      missingNonPantry.length * 8; // penalise hard-to-get missing items
 
     // Substitution suggestions for missing ingredients
     const substitutionSuggestions = getSuggestions(missingIngredients);
@@ -331,14 +493,17 @@ app.post("/generate", (req, res) => {
         matchesDiet(recipe, dietaryPreference) &&
         matchesDifficulty(recipe, difficulty) &&
         withinTime(recipe, maxTime) &&
-        (!cuisine || (recipe.cuisine && recipe.cuisine.toLowerCase() === cuisine.toLowerCase())),
+        (!cuisine ||
+          (recipe.cuisine &&
+            recipe.cuisine.toLowerCase() === cuisine.toLowerCase())),
     )
     // Primary sort: composite score (desc)
     // Tie-breaker: coverage % (desc), then recipe match % (desc)
-    .sort((a, b) =>
-      b.compositeScore - a.compositeScore ||
-      b.coveragePercentage - a.coveragePercentage ||
-      b.matchPercentage - a.matchPercentage,
+    .sort(
+      (a, b) =>
+        b.compositeScore - a.compositeScore ||
+        b.coveragePercentage - a.coveragePercentage ||
+        b.matchPercentage - a.matchPercentage,
     );
 
   res.json({ recipes: filteredRecipes });
@@ -415,27 +580,106 @@ const selectBodyParser = (req, res, next) => {
 // ── Shared image-analysis logic ──────────────────────────────────────────────
 const ingredientKeywords = [
   // Vegetables
-  "tomato", "onion", "potato", "carrot", "cucumber", "lettuce", "broccoli",
-  "cabbage", "spinach", "kale", "bell pepper", "pepper", "mushroom",
-  "zucchini", "eggplant", "corn", "peas", "beans", "garlic", "ginger",
-  "celery", "cauliflower", "beetroot", "radish", "turnip", "leek",
-  "asparagus", "artichoke", "pumpkin", "squash",
+  "tomato",
+  "onion",
+  "potato",
+  "carrot",
+  "cucumber",
+  "lettuce",
+  "broccoli",
+  "cabbage",
+  "spinach",
+  "kale",
+  "bell pepper",
+  "pepper",
+  "mushroom",
+  "zucchini",
+  "eggplant",
+  "corn",
+  "peas",
+  "beans",
+  "garlic",
+  "ginger",
+  "celery",
+  "cauliflower",
+  "beetroot",
+  "radish",
+  "turnip",
+  "leek",
+  "asparagus",
+  "artichoke",
+  "pumpkin",
+  "squash",
   // Fruits
-  "apple", "banana", "strawberry", "orange", "lemon", "lime", "mango",
-  "grape", "watermelon", "pineapple", "peach", "pear", "cherry",
-  "blueberry", "raspberry", "avocado", "coconut", "papaya", "kiwi",
+  "apple",
+  "banana",
+  "strawberry",
+  "orange",
+  "lemon",
+  "lime",
+  "mango",
+  "grape",
+  "watermelon",
+  "pineapple",
+  "peach",
+  "pear",
+  "cherry",
+  "blueberry",
+  "raspberry",
+  "avocado",
+  "coconut",
+  "papaya",
+  "kiwi",
   // Proteins
-  "chicken", "beef", "pork", "fish", "egg", "shrimp", "prawn", "lamb",
-  "turkey", "bacon", "sausage", "ham", "salmon", "tuna", "crab",
+  "chicken",
+  "beef",
+  "pork",
+  "fish",
+  "egg",
+  "shrimp",
+  "prawn",
+  "lamb",
+  "turkey",
+  "bacon",
+  "sausage",
+  "ham",
+  "salmon",
+  "tuna",
+  "crab",
   // Dairy
-  "milk", "cheese", "butter", "cream", "yogurt", "paneer", "curd",
+  "milk",
+  "cheese",
+  "butter",
+  "cream",
+  "yogurt",
+  "paneer",
+  "curd",
   // Grains & carbs
-  "rice", "bread", "pasta", "noodles", "flour", "oats", "wheat",
+  "rice",
+  "bread",
+  "pasta",
+  "noodles",
+  "flour",
+  "oats",
+  "wheat",
   // Nuts & seeds
-  "peanut", "almond", "cashew", "walnut", "pistachio",
+  "peanut",
+  "almond",
+  "cashew",
+  "walnut",
+  "pistachio",
   // Misc
-  "chocolate", "cocoa", "honey", "sugar", "salt", "oil", "vinegar",
-  "soy sauce", "tofu", "lentils", "chickpeas",
+  "chocolate",
+  "cocoa",
+  "honey",
+  "sugar",
+  "salt",
+  "oil",
+  "vinegar",
+  "soy sauce",
+  "tofu",
+  "lentils",
+  "chickpeas",
 ];
 
 async function analyzeOneImage(imageBuffer) {
@@ -463,11 +707,16 @@ async function analyzeOneImage(imageBuffer) {
   const seen = new Set();
 
   for (const item of ingredients) {
-    const name = ingredientKeywords.find((kw) => item.label.includes(kw)) || item.label;
+    const name =
+      ingredientKeywords.find((kw) => item.label.includes(kw)) || item.label;
     if (!seen.has(name)) {
       seen.add(name);
       names.push(name);
-      confidence.push({ name, confidence: Math.round(item.score * 100), rawLabel: item.label });
+      confidence.push({
+        name,
+        confidence: Math.round(item.score * 100),
+        rawLabel: item.label,
+      });
     }
   }
 
@@ -532,13 +781,20 @@ app.post("/analyze-images", upload.array("images", 10), async (req, res) => {
           }
         }
       } else {
-        perImage.push({ index: idx, error: result.reason?.message || "Analysis failed" });
+        perImage.push({
+          index: idx,
+          error: result.reason?.message || "Analysis failed",
+        });
       }
     });
 
     if (mergedNames.length === 0) {
       mergedNames.push("tomato");
-      mergedConfidence.push({ name: "tomato", confidence: 50, rawLabel: "fallback" });
+      mergedConfidence.push({
+        name: "tomato",
+        confidence: 50,
+        rawLabel: "fallback",
+      });
     }
 
     console.log("MULTI-IMAGE INGREDIENTS:", mergedNames);
