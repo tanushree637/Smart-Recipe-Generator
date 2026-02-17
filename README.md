@@ -74,19 +74,35 @@ The overall goal was to combine AI capability with user-centric design to create
 ## 📂 Project Structure
 
 ```
-smart-recipe-generator/
+SMART-RECIPE-GENERATOR/
 │
 ├── client/
+│   ├── dist/
+│   ├── node_modules/
+│   ├── public/
 │   ├── src/
-│   ├── assets/
-│   ├── App.jsx
-│   └── main.jsx
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── README.md
+│   └── vite.config.js
 │
 ├── server/
-│   ├── server.js
+│   ├── node_modules/
+│   ├── .env.example
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── README.md
 │   ├── recipes.json
-│   ├── substitutions.js
-│   └── .env.example
+│   ├── recipes.json.bak
+│   ├── server.js
+│   └── substitutions.js
+│
+├── node_modules/
+├── package.json
+└── package-lock.json
 ```
 
 ---
