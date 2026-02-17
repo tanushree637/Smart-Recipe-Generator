@@ -15,8 +15,7 @@
 
 ## ✨ About The Project
 
-Smart Recipe Generator is a modern full-stack AI application that helps users discover recipes using available ingredients.  
-It leverages image recognition and intelligent matching to suggest personalized recipes based on user preferences.
+Smart Recipe Generator is a modern full-stack AI application that helps users discover recipes using available ingredients.  It leverages image recognition and intelligent matching to suggest personalized recipes based on user preferences.
 The Smart Recipe Generator was designed using a modular full-stack architecture with a clear separation between frontend, backend, and AI services.
 On the frontend, I built a responsive and intuitive UI using React and Tailwind CSS to ensure smooth interaction and real-time filtering. The interface allows users to manually enter ingredients or upload food images for automatic detection.
 The backend, built with Node.js and Express, handles recipe matching, filtering logic, serving-size recalculations, and intelligent substitutions. Recipes are stored in a structured JSON format for efficient querying and scalability.
